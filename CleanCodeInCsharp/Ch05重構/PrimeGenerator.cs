@@ -14,7 +14,6 @@ namespace CleanCodeInCsharp.Ch05重構
 {
     public class PrimeGenerator
     {
-        private static int s;
         private static bool[] f;
         private static int[] primes;
 
@@ -29,28 +28,28 @@ namespace CleanCodeInCsharp.Ch05重構
                 return new int[0];
             else
             {
-                InitailizeSieve(maxValue);
-                Sieve();
-                LoadPrimes();
+                InitailizeArrayOfIntegers(maxValue);
+                CrossOutMultiples();
+                PutUncrossedIntegerIntoResult();
                 return primes;
             }
         }
 
         //將過濾後的結果存至另一整數列
-        private static void LoadPrimes()
+        private static void PutUncrossedIntegerIntoResult()
         {
             int count = 0;
             int i, j;
 
             //有多少個質數?
-            for(i = 0; i < s; i++)
+            for(i = 0; i < f.Length; i++)
             {
                 if (f[i]) count++;
             }
 
             //把質數轉移至結果陣列中
             primes = new int[count];
-            for(j = 0,i = 0; i < s; i++)
+            for(j = 0,i = 0; i < f.Length; i++)
             {
                 if (f[i])
                    primes[j++] = i;
@@ -61,15 +60,15 @@ namespace CleanCodeInCsharp.Ch05重構
         /// <summary>
         /// 執行質數過濾工作
         /// </summary>
-        private static void Sieve()
+        private static void CrossOutMultiples()
         {
             int i, j;
 
-            for(i = 2; i < Math.Sqrt(s) + 1 ; i++)
+            for(i = 2; i < Math.Sqrt(f.Length) + 1 ; i++)
             {
                 if (f[i]) //如果未被劃掉，則劃掉其倍數
                 {
-                    for (j = 2 * i; j < s; j += i)
+                    for (j = 2 * i; j < f.Length; j += i)
                     {
                         f[j] = false;
                     }
@@ -81,14 +80,13 @@ namespace CleanCodeInCsharp.Ch05重構
         /// 對所有變數進行初始化
         /// </summary>
         /// <param name="maxValue">產生的最大值</param>
-        private static void InitailizeSieve(int maxValue)
+        private static void InitailizeArrayOfIntegers(int maxValue)
         {
-            s = maxValue + 1; //陣列大小
-            f = new bool[s];
+            f = new bool[maxValue + 1];
             int i;
 
             //將陣列初始化為true
-            for(i = 0; i < s; i++)
+            for(i = 0; i < f.Length; i++)
             {
                 f[i] = true;
             }
