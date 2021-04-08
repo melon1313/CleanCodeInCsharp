@@ -14,8 +14,8 @@ namespace CleanCodeInCsharp.Ch05重構
 {
     public class PrimeGenerator
     {
-        private static bool[] f;
-        private static int[] primes;
+        private static bool[] isCrossed;
+        private static int[] result;
 
         /// <summary>
         /// 產生一個包含質數的陣列
@@ -30,31 +30,31 @@ namespace CleanCodeInCsharp.Ch05重構
             {
                 InitailizeArrayOfIntegers(maxValue);
                 CrossOutMultiples();
-                PutUncrossedIntegerIntoResult();
-                return primes;
+                PutUncrossedIntegersIntoResult();
+                return result;
             }
         }
 
-        //將過濾後的結果存至另一整數列
-        private static void PutUncrossedIntegerIntoResult()
+        private static void PutUncrossedIntegersIntoResult()
+        {
+            result = new int[NumberOfUncrossedIntegers()];
+            for(int j = 0, i = 2; i < isCrossed.Length; i++)
+            {
+                if(NotCrossed(i))
+                    result[j++] = i;
+            }
+        }
+
+        private static int NumberOfUncrossedIntegers()
         {
             int count = 0;
-            int i, j;
 
-            //有多少個質數?
-            for(i = 0; i < f.Length; i++)
+            for(int i = 2; i < isCrossed.Length; i++)
             {
-                if (f[i]) count++;
+                if (NotCrossed(i)) count++;
             }
 
-            //把質數轉移至結果陣列中
-            primes = new int[count];
-            for(j = 0,i = 0; i < f.Length; i++)
-            {
-                if (f[i])
-                   primes[j++] = i;
-            }
-            
+            return count;
         }
 
         /// <summary>
@@ -62,18 +62,32 @@ namespace CleanCodeInCsharp.Ch05重構
         /// </summary>
         private static void CrossOutMultiples()
         {
-            int i, j;
+            int maxPrimeFactor = CalcMaxPrimeFactor();
 
-            for(i = 2; i < Math.Sqrt(f.Length) + 1 ; i++)
+            for(int i = 2; i < maxPrimeFactor + 1 ; i++)
             {
-                if (f[i]) //如果未被劃掉，則劃掉其倍數
-                {
-                    for (j = 2 * i; j < f.Length; j += i)
-                    {
-                        f[j] = false;
-                    }
-                }
+                if (NotCrossed(i))
+                    CrossOutputMultiplesOf(i);
             }
+        }
+
+        private static void CrossOutputMultiplesOf(int i)
+        {
+            for( int multiple = 2 * i; multiple < isCrossed.Length; multiple += i)
+            {
+                isCrossed[multiple] = true;
+            }
+        }
+
+        private static bool NotCrossed(int i)
+        {
+            return isCrossed[i] == false;
+        }
+
+        private static int CalcMaxPrimeFactor()
+        {
+            double maxPrimeFactor = Math.Sqrt(isCrossed.Length) + 1;
+            return (int)maxPrimeFactor;
         }
 
         /// <summary>
@@ -82,17 +96,10 @@ namespace CleanCodeInCsharp.Ch05重構
         /// <param name="maxValue">產生的最大值</param>
         private static void InitailizeArrayOfIntegers(int maxValue)
         {
-            f = new bool[maxValue + 1];
-            int i;
+            isCrossed = new bool[maxValue + 1];
 
-            //將陣列初始化為true
-            for(i = 0; i < f.Length; i++)
-            {
-                f[i] = true;
-            }
-
-            //去掉已知的非質數
-            f[0] = f[1] = false;
+            for (int i = 2; i < isCrossed.Length; i++)
+                isCrossed[i] = false;
         }
     }
 }
