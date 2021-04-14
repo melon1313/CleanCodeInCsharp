@@ -30,5 +30,25 @@ namespace CleanCodeInCsharp.Ch05重構.Tests
             Assert.AreEqual(centArray.Length, 25);
             Assert.AreEqual(centArray[24], 97);
         }
+
+        [Test]
+        public void TestExhaustive()
+        {
+            for(int i = 2; i < 500; i++)
+                VerifyPrimeList(PrimeGenerator.GeneratePrimeNumbers(i));
+
+        }
+
+        private void VerifyPrimeList(int[] list)
+        {
+            for(int i = 0; i < list.Length; i++)
+                VerifyPrimeList(list[i]);
+        }
+
+        private void VerifyPrimeList(int n)
+        {
+            for (int factor = 2; factor < n; factor++)
+                Assert.IsTrue(n%factor != 0);
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace CleanCodeInCsharp.Ch05重構
 {
     public class PrimeGenerator
     {
-        private static bool[] isCrossed;
+        private static bool[] crossedOut;
         private static int[] result;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace CleanCodeInCsharp.Ch05重構
                 return new int[0];
             else
             {
-                InitailizeArrayOfIntegers(maxValue);
+                UncrossIntegersUpTo(maxValue);
                 CrossOutMultiples();
                 PutUncrossedIntegersIntoResult();
                 return result;
@@ -38,7 +38,7 @@ namespace CleanCodeInCsharp.Ch05重構
         private static void PutUncrossedIntegersIntoResult()
         {
             result = new int[NumberOfUncrossedIntegers()];
-            for(int j = 0, i = 2; i < isCrossed.Length; i++)
+            for(int j = 0, i = 2; i < crossedOut.Length; i++)
             {
                 if(NotCrossed(i))
                     result[j++] = i;
@@ -49,7 +49,7 @@ namespace CleanCodeInCsharp.Ch05重構
         {
             int count = 0;
 
-            for(int i = 2; i < isCrossed.Length; i++)
+            for(int i = 2; i < crossedOut.Length; i++)
             {
                 if (NotCrossed(i)) count++;
             }
@@ -62,9 +62,9 @@ namespace CleanCodeInCsharp.Ch05重構
         /// </summary>
         private static void CrossOutMultiples()
         {
-            int maxPrimeFactor = CalcMaxPrimeFactor();
+            int limit = DetermineIterationLimit();
 
-            for(int i = 2; i < maxPrimeFactor + 1 ; i++)
+            for(int i = 2; i <= limit; i++)
             {
                 if (NotCrossed(i))
                     CrossOutputMultiplesOf(i);
@@ -73,33 +73,33 @@ namespace CleanCodeInCsharp.Ch05重構
 
         private static void CrossOutputMultiplesOf(int i)
         {
-            for( int multiple = 2 * i; multiple < isCrossed.Length; multiple += i)
+            for( int multiple = 2 * i; multiple < crossedOut.Length; multiple += i)
             {
-                isCrossed[multiple] = true;
+                crossedOut[multiple] = true;
             }
         }
 
         private static bool NotCrossed(int i)
         {
-            return isCrossed[i] == false;
+            return crossedOut[i] == false;
         }
 
-        private static int CalcMaxPrimeFactor()
+        private static int DetermineIterationLimit()
         {
-            double maxPrimeFactor = Math.Sqrt(isCrossed.Length) + 1;
-            return (int)maxPrimeFactor;
+            double iterationLimit = Math.Sqrt(crossedOut.Length);
+            return (int)iterationLimit;
         }
 
         /// <summary>
         /// 對所有變數進行初始化
         /// </summary>
         /// <param name="maxValue">產生的最大值</param>
-        private static void InitailizeArrayOfIntegers(int maxValue)
+        private static void UncrossIntegersUpTo(int maxValue)
         {
-            isCrossed = new bool[maxValue + 1];
+            crossedOut = new bool[maxValue + 1];
 
-            for (int i = 2; i < isCrossed.Length; i++)
-                isCrossed[i] = false;
+            for (int i = 2; i < crossedOut.Length; i++)
+                crossedOut[i] = false;
         }
     }
 }
